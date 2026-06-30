@@ -1,6 +1,5 @@
 // Usar URL relativa - Vercel hará el proxy automáticamente
-const API_URL = import.meta.env.PROD ? '' : 'https://saferoute-api-m4i5.onrender.com';
-
+const API_URL = 'https://saferoute-api-m4i5.onrender.com';
 const MOTORES: Record<string, string> = {
   nlp: import.meta.env.PROD ? 'https://saferoute-api-m4i5.onrender.com/api' : 'http://localhost:8001',
   predicciones: import.meta.env.PROD ? 'https://saferoute-api-m4i5.onrender.com/api' : 'http://localhost:8003',
