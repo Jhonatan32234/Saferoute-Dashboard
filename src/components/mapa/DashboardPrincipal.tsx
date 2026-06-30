@@ -9,7 +9,7 @@ import PanelBusqueda from './PanelBusqueda';
 import PanelPredicciones from './PanelPredicciones';
 import PanelEstadisticas from './PanelEstadisticas';
 import LoadingSpinner from '../ui/LoadingSpinner';
-import { useAdminWebSocket } from '@/hooks/useAdminWebSocket';
+import { useAdminWebSocket } from '../../hooks/useAdminWebSocket';
 import PanelConductores from './PanelConductores';
 
 const reportColors: Record<string, string> = {
