@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a1628;
+    color: #e8eef5;
+    line-height: 1.6;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  a {
+    color: #0ea5e9;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  /* Scrollbar azul marino */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a1628;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2a4070;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3b5998;
+  }
+}
+
+@layer components {
+  /* Loader */
+  .loader {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #0ea5e9;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Grid Layouts */
+  .grid-2 {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-5;
+  }
+
+  .grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5;
+  }
+
+  .grid-4 {
+    @apply grid grid-cols-2 lg:grid-cols-4 gap-4;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply bg-[#0f1f3a] border border-[#2a4070] rounded-lg p-4 text-center;
+  }
+
+  .stat-value {
+    @apply text-3xl font-extrabold block;
+  }
+
+  .stat-label {
+    @apply text-xs text-[#94a3b8] mt-1;
+  }
+
+  /* Search Bar */
+  .search-bar {
+    @apply flex gap-2 mb-4;
+  }
+
+  .search-bar input {
+    @apply flex-1 px-4 py-2.5 bg-[#0a1628] border border-[#2a4070] rounded-lg text-[#e8eef5] text-sm outline-none transition-colors;
+  }
+
+  .search-bar input:focus {
+    @apply border-[#0ea5e9];
+  }
+
+  /* Data Table */
+  .data-table {
+    @apply w-full border-collapse;
+  }
+
+  .data-table th {
+    @apply bg-[#0f1f3a] px-4 py-2.5 text-left text-xs font-semibold text-[#94a3b8] uppercase tracking-wider border-b border-[#2a4070];
+  }
+
+  .data-table td {
+    @apply px-4 py-2.5 text-sm border-b border-[#2a4070];
+  }
+
+  .data-table tr:hover td {
+    @apply bg-[#162744];
+  }
+
+  /* Loading */
+  .loading-container {
+    @apply flex flex-col items-center justify-center py-12 text-[#94a3b8] gap-3;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-block px-2 py-0.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider;
+  }
+
+  .badge-red { @apply bg-[rgba(239,68,68,0.15)] text-[#ef4444]; }
+  .badge-orange { @apply bg-[rgba(245,158,11,0.15)] text-[#f59e0b]; }
+  .badge-blue { @apply bg-[rgba(14,165,233,0.15)] text-[#0ea5e9]; }
+  .badge-green { @apply bg-[rgba(16,185,129,0.15)] text-[#10b981]; }
+  .badge-purple { @apply bg-[rgba(139,92,246,0.15)] text-[#8b5cf6]; }
+
+  /* Forms */
+  .form-group {
+    @apply text-left mb-4;
+  }
+
+  .form-group label {
+    @apply block text-[#94a3b8] text-sm mb-1.5 font-medium;
+  }
+
+  .form-group input {
+    @apply w-full px-4 py-3 bg-[#0a1628] border border-[#2a4070] rounded-lg text-[#e8eef5] text-base outline-none transition-colors;
+  }
+
+  .form-group input:focus {
+    @apply border-[#0ea5e9];
+  }
+
+  .form-options {
+    @apply text-left mb-5;
+  }
+
+  .checkbox-label {
+    @apply flex items-center gap-2 text-[#94a3b8] text-sm cursor-pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    accent-color: #0ea5e9;
+  }
+  /* Animación para marcadores de conductores en el mapa */
+@keyframes pulse-blue {
+  0%, 100% { box-shadow: 0 0 4px rgba(59,130,246,0.4); }
+  50% { box-shadow: 0 0 12px rgba(59,130,246,0.8); }
+}
+}
+
+/* Efecto de pulso para marcador de conductor */
+@keyframes conductorPulse {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.conductor-pulse {
+  animation: conductorPulse 2s infinite;
+}
