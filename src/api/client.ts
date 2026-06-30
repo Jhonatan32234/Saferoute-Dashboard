@@ -1,5 +1,5 @@
-// Usar URL relativa - Vercel hará el proxy automáticamente
 const API_URL = 'https://saferoute-api-m4i5.onrender.com';
+
 const MOTORES: Record<string, string> = {
   nlp: "https://cca9-189-150-33-249.ngrok-free.app",
   predicciones: "https://f732-189-150-33-249.ngrok-free.app",
@@ -34,6 +34,11 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
     ...(options.headers as Record<string, string>),
   };
 
+  // 💡 CRÍTICO: Si la URL va hacia ngrok, saltarse la pantalla de advertencia del navegador
+  if (url.includes('ngrok-free.app')) {
+    headers['ngrok-skip-browser-warning'] = 'true';
+  }
+
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
   }
@@ -64,7 +69,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   }
 }
 
-// API Gateway
+// API Gateway (Render)
 export const api = {
   get: <T = any>(endpoint: string) => 
     request<T>(`${API_URL}${endpoint}`),
@@ -76,7 +81,7 @@ export const api = {
     }),
 };
 
-// Motores locales (en producción, usar API Gateway)
+// Motores externos (Directo a tus túneles de ngrok)
 export const motores = {
   get: <T = any>(motor: string, endpoint: string) =>
     request<T>(`${MOTORES[motor]}${endpoint}`),
