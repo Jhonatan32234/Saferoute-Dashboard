@@ -1,10 +1,12 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://saferoute-api-m4i5.onrender.com';
+// Usar URL relativa - Vercel hará el proxy automáticamente
+const API_URL = import.meta.env.PROD ? '' : 'https://saferoute-api-m4i5.onrender.com';
 
 const MOTORES: Record<string, string> = {
-  nlp: import.meta.env.VITE_NLP_URL || 'http://localhost:8001',
-  predicciones: import.meta.env.VITE_PREDICCIONES_URL || 'http://localhost:8003',
-  llm: import.meta.env.VITE_LLM_URL || 'http://localhost:8002',
+  nlp: import.meta.env.PROD ? 'https://saferoute-api-m4i5.onrender.com/api' : 'http://localhost:8001',
+  predicciones: import.meta.env.PROD ? 'https://saferoute-api-m4i5.onrender.com/api' : 'http://localhost:8003',
+  llm: import.meta.env.PROD ? 'https://saferoute-api-m4i5.onrender.com/api' : 'http://localhost:8002',
 };
+
 let authToken = localStorage.getItem('saferoute_token') || '';
 
 export function setToken(token: string) {
@@ -35,12 +37,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
-    console.log('🔐 Enviando token en header');
-  } else {
-    console.warn('⚠️ No hay token para esta petición:', url);
   }
-
-  console.log(`📡 ${options.method || 'GET'} ${url}`);
 
   try {
     const response = await fetch(url, { 
@@ -49,10 +46,7 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
       credentials: 'omit'
     });
 
-    console.log(`📥 Respuesta: ${response.status} ${response.statusText}`);
-
     if (response.status === 401) {
-      console.error('🔒 Token inválido o expirado');
       setToken('');
       localStorage.clear();
       window.location.hash = '#login';
@@ -61,19 +55,17 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      console.error('❌ Error del servidor:', error);
       throw new ApiError(error.error || `Error ${response.status}`, response.status);
     }
 
     return response.json();
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    console.error('🌐 Error de red:', error);
     throw new ApiError('No se pudo conectar con el servidor', 0);
   }
 }
 
-// API Gateway - NOTA: los endpoints YA incluyen /api en el backend
+// API Gateway
 export const api = {
   get: <T = any>(endpoint: string) => 
     request<T>(`${API_URL}${endpoint}`),
@@ -85,7 +77,7 @@ export const api = {
     }),
 };
 
-// Motores locales
+// Motores locales (en producción, usar API Gateway)
 export const motores = {
   get: <T = any>(motor: string, endpoint: string) =>
     request<T>(`${MOTORES[motor]}${endpoint}`),
