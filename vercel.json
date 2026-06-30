@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://saferoute-api-m4i5.onrender.com/api/:path*"
+      "destination": "/api/proxy"
     },
     {
       "source": "/(.*)",
