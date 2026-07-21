@@ -11,6 +11,7 @@ export default function OnboardingPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('bienvenida');
   const [loading, setLoading] = useState(false);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Datos empresa
@@ -25,9 +26,23 @@ export default function OnboardingPage() {
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('tarjeta');
   const [precios, setPrecios] = useState<CalcularPrecioResponse | null>(null);
 
+  // Verificar si el usuario ya completo onboarding
   useEffect(() => {
-    cargarPlanes();
-  }, []);
+    async function checkOnboarding() {
+      try {
+        await api.get('/api/billing/empresa');
+        // Si existe empresa, redirigir al dashboard
+        navigate('/dashboard/mapa', { replace: true });
+        return;
+      } catch {
+        // No hay empresa registrada, mostrar onboarding
+        cargarPlanes();
+      } finally {
+        setCheckingOnboarding(false);
+      }
+    }
+    checkOnboarding();
+  }, [navigate]);
 
   useEffect(() => {
     if (planSeleccionado) {
