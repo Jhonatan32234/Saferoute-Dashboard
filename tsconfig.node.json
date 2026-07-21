@@ -6,10 +6,8 @@
     "skipLibCheck": true,
     "module": "nodenext",
     "moduleDetection": "force",
-    "noEmit": true,
+    "noEmit": false,
     "composite": true,
-
-    /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
