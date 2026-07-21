@@ -7,6 +7,8 @@ import Input from '../ui/Input';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import LoadingSpinner from '../ui/LoadingSpinner';
+import AdminMonitorView from '../monitor/AdminMonitorView';
+
 
 export default function ReportesView() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,7 +56,7 @@ export default function ReportesView() {
     try {
       const data = await motores.post('nlp', '/nlp/buscar', {
         query: searchQuery,
-        top_k: 8,
+        top_k: 20,
         metodo: 'bm25'
       });
       
@@ -75,7 +77,7 @@ export default function ReportesView() {
   };
 
   return (
-    <div className="p-4 lg:p-6 space-y-6">
+    <div className="p-4 lg:p-6 space-y-6 h-full overflow-y-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Búsqueda de Reportes */}
         <Card title="Buscar Reportes">
@@ -178,6 +180,7 @@ export default function ReportesView() {
           )}
         </Card>
       </div>
+    <AdminMonitorView />
     </div>
   );
 }

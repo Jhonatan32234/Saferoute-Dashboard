@@ -19,7 +19,7 @@ export interface AuthResponse {
 }
 
 // Tipos de reportes
-export type TipoReporte = 
+export type TipoReporte =
   | 'inundacion' 
   | 'accidente' 
   | 'bache' 
@@ -28,17 +28,6 @@ export type TipoReporte =
   | 'niebla' 
   | 'bloqueo' 
   | 'otro';
-
-export interface Reporte {
-  id: string;
-  tipo: TipoReporte;
-  texto: string;
-  nota_voz?: string;
-  timestamp: string;
-  confirmaciones: number;
-  ruta_id: string;
-  score?: number;
-}
 
 // Tipos de clusters y mapa
 export interface Cluster {
@@ -53,12 +42,17 @@ export interface Cluster {
 
 // Tipos de predicciones
 export interface ZonaPredicha {
+  cluster_id?: number;
   nombre_zona: string;
   nivel: 'critico' | 'alto' | 'medio' | 'bajo';
   probabilidad_incidente: number;
   tipo_riesgo_predominante: string;
   factores_contribuyentes: string[];
   recomendacion: string;
+  lat?: number;
+  lon?: number;
+  latitud?: number;
+  longitud?: number;
 }
 
 export interface Conductor {

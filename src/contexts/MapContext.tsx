@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useMemo, useCallback } from 'react';
 
 export interface PuntoMapa {
   id: string;
@@ -31,35 +31,53 @@ export function MapProvider({ children }: { children: ReactNode }) {
   const [centroMapa, setCentroMapa] = useState<[number, number]>([16.753, -93.115]);
   const [zoomMapa, setZoomMapa] = useState(8);
 
-  // Wrapper que acepta función o array
-  const setPuntos = (puntos: PuntoMapa[] | ((prev: PuntoMapa[]) => PuntoMapa[])) => {
+  // Estabilizar funciones con useCallback para evitar recreaciones innecesarias
+  const setPuntos = useCallback((nuevosPuntos: PuntoMapa[] | ((prev: PuntoMapa[]) => PuntoMapa[])) => {
     setPuntosState(prev => {
-      const result = typeof puntos === 'function' ? puntos(prev) : puntos;
-      return result;
+      const result = typeof nuevosPuntos === 'function' ? nuevosPuntos(prev) : nuevosPuntos;
+      // Solo actualizar si realmente hay cambios
+      return JSON.stringify(result) !== JSON.stringify(prev) ? result : prev;
     });
-  };
+  }, []);
 
-  const agregarPuntos = (nuevosPuntos: PuntoMapa[]) => {
-    setPuntosState(prev => [...prev, ...nuevosPuntos]);
-  };
+  const agregarPuntos = useCallback((nuevosPuntos: PuntoMapa[]) => {
+    setPuntosState(prev => {
+      // Evitar duplicados por ID
+      const existingIds = new Set(prev.map(p => p.id));
+      const puntosUnicos = nuevosPuntos.filter(p => !existingIds.has(p.id));
+      return puntosUnicos.length > 0 ? [...prev, ...puntosUnicos] : prev;
+    });
+  }, []);
 
-  const limpiarPuntos = () => {
-    setPuntosState([]);
-  };
+  const limpiarPuntos = useCallback(() => {
+    setPuntosState(prev => prev.length > 0 ? [] : prev);
+  }, []);
 
-  const limpiarPuntosPorTipo = (tipo: 'reporte' | 'prediccion' | 'conductor') => {
+  const limpiarPuntosPorTipo = useCallback((tipo: 'reporte' | 'prediccion' | 'conductor') => {
     setPuntosState(prev => {
       const nuevos = prev.filter(p => p.tipo !== tipo);
-      if (nuevos.length !== prev.length) return nuevos;
-      return prev;
+      return nuevos.length !== prev.length ? nuevos : prev;
     });
-  };
+  }, []);
+
+  // Memorizar el valor del contexto para evitar renders innecesarios
+  const value = useMemo(
+    () => ({
+      puntos,
+      setPuntos,
+      agregarPuntos,
+      limpiarPuntos,
+      limpiarPuntosPorTipo,
+      centroMapa,
+      setCentroMapa,
+      zoomMapa,
+      setZoomMapa,
+    }),
+    [puntos, centroMapa, zoomMapa, setPuntos, agregarPuntos, limpiarPuntos, limpiarPuntosPorTipo, setCentroMapa, setZoomMapa],
+  );
 
   return (
-    <MapContext.Provider value={{ 
-      puntos, setPuntos, agregarPuntos, limpiarPuntos,
-      limpiarPuntosPorTipo, centroMapa, setCentroMapa, zoomMapa, setZoomMapa
-    }}>
+    <MapContext.Provider value={value}>
       {children}
     </MapContext.Provider>
   );

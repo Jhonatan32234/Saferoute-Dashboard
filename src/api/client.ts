@@ -1,9 +1,10 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://saferoute-api-m4i5.onrender.com';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+export const INTERNAL_API_KEY = import.meta.env.VITE_INTERNAL_API_KEY || 'my-key';
 
 const MOTORES: Record<string, string> = {
-  nlp: import.meta.env.VITE_NLP_URL || 'http://localhost:8001',
-  predicciones: import.meta.env.VITE_PREDICCIONES_URL || 'http://localhost:8003',
-  llm: import.meta.env.VITE_LLM_URL || 'http://localhost:8002',
+  nlp: import.meta.env.VITE_NLP_URL || 'https://motor-nlp.onrender.com',
+  predicciones: import.meta.env.VITE_PREDICCIONES_URL || 'https://motor-predicciones.onrender.com',
+  llm: import.meta.env.VITE_LLM_URL || '',
 };
 let authToken = localStorage.getItem('saferoute_token') || '';
 
@@ -83,7 +84,29 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(body),
     }),
+
+  put: <T = any>(endpoint: string, body: unknown) => 
+    request<T>(`${API_URL}${endpoint}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+
+  delete: <T = any>(endpoint: string) => 
+    request<T>(`${API_URL}${endpoint}`, {
+      method: 'DELETE',
+    }),
+
+  postInternal: <T = any>(endpoint: string, body: unknown) =>
+    request<T>(`${API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: { 'X-Internal-API-Key': INTERNAL_API_KEY },
+      body: JSON.stringify(body),
+    }),
 };
+
+export function toWebSocketURL(baseURL = API_URL): string {
+  return baseURL.replace(/^https:/, 'wss:').replace(/^http:/, 'ws:');
+}
 
 // Motores locales
 export const motores = {

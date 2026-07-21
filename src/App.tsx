@@ -3,6 +3,11 @@ import { AuthProvider } from './contexts/AuthContext';
 import { MapProvider } from './contexts/MapContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import OnboardingPage from './pages/OnboardingPage';
+import SuccessPage from './pages/SuccessPage';
+import CancelPage from './pages/CancelPage';
+import PricingPage from './pages/PricingPage';
+import SubscriptionGuard from './guards/SubscriptionGuard';
 
 function NotFoundPage() {
   return (
@@ -24,8 +29,23 @@ export default function App() {
       <AuthProvider>
         <MapProvider>
           <Routes>
+            {/* Públicas */}
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard/*" element={<DashboardPage />} />
+            <Route path="/precios" element={<PricingPage />} />
+            <Route path="/pago-exitoso" element={<SuccessPage />} />
+            <Route path="/pago-cancelado" element={<CancelPage />} />
+
+            {/* Onboarding (requiere auth pero no suscripción) */}
+            <Route path="/onboarding" element={<OnboardingPage />} />
+
+            {/* Dashboard protegido por suscripción */}
+            <Route path="/dashboard/*" element={
+              <SubscriptionGuard>
+                <DashboardPage />
+              </SubscriptionGuard>
+            } />
+
+            {/* Default */}
             <Route path="/" element={<Navigate to="/dashboard/mapa" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

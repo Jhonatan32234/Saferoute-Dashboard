@@ -151,7 +151,7 @@ export default function PrediccionesView() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 h-full overflow-y-auto">
       <div className="grid-2">
         {/* Predicción de Zonas */}
         <Card 

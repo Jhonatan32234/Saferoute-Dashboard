@@ -6,7 +6,8 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<User>;  // ← Cambiado a Promise<User>
+  register: (credentials: LoginCredentials & { nombre: string }) => Promise<User>;  // ← Cambiado
   logout: () => void;
   clearError: () => void;
 }
@@ -21,7 +22,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = getToken();
     if (token) {
-      // Intentar validar token con el perfil
       validateToken();
     } else {
       setIsLoading(false);
@@ -30,25 +30,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function validateToken() {
     try {
-      // El endpoint correcto es /api/user/profile
       const data = await api.get('/api/user/profile');
-      
+
       setUser({
         id: data.id || '1',
         nombre: data.nombre || 'Administrador',
         email: data.email || '',
         tipo: data.tipo || 'admin',
       });
-      
-      // Guardar en localStorage para respaldo
+
       localStorage.setItem('user_name', data.nombre || 'Administrador');
       localStorage.setItem('user_email', data.email || '');
       localStorage.setItem('user_tipo', data.tipo || 'admin');
-      
     } catch (err) {
       console.warn('No se pudo validar token con el servidor');
-      
-      // Si hay token guardado, usar datos locales
+
       if (getToken()) {
         setUser({
           id: '1',
@@ -64,53 +60,97 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function login(credentials: LoginCredentials) {
-  setError(null);
-  setIsLoading(true);
-  
-  try {
-    console.log('🔑 Intentando login con:', credentials.email);
-    
-    const data = await api.post('/api/auth/login', credentials);
-    
-    console.log('✅ Respuesta del servidor:', data);
-    
-    if (data.token) {
-      console.log('🔐 Token recibido:', data.token.substring(0, 20) + '...');
-      setToken(data.token);
-      
-      const userData: User = {
-        id: data.user_id || '1',
-        nombre: data.nombre || 'Administrador',
-        email: credentials.email,
-        tipo: data.tipo || 'admin',
-      };
-      
-      console.log('👤 Usuario guardado:', userData);
-      
-      localStorage.setItem('user_name', userData.nombre);
-      localStorage.setItem('user_email', userData.email);
-      localStorage.setItem('user_tipo', userData.tipo);
-      
-      setUser(userData);
-    } else {
-      throw new Error(data.error || 'Credenciales invalidas');
+  // ✅ Ahora retorna User
+  async function login(credentials: LoginCredentials): Promise<User> {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      console.log('🔑 Intentando login con:', credentials.email);
+
+      const data = await api.post('/api/auth/login', credentials);
+
+      console.log('✅ Respuesta del servidor:', data);
+
+      if (data.token) {
+        console.log('🔐 Token recibido:', data.token.substring(0, 20) + '...');
+        setToken(data.token);
+
+        const userData: User = {
+          id: data.user_id || '1',
+          nombre: data.nombre || 'Administrador',
+          email: data.email || credentials.email,
+          tipo: data.tipo || 'admin',
+        };
+
+        console.log('👤 Usuario guardado:', userData);
+
+        localStorage.setItem('user_name', userData.nombre);
+        localStorage.setItem('user_email', userData.email);
+        localStorage.setItem('user_tipo', userData.tipo);
+
+        setUser(userData);
+        return userData;  // ✅ Retornar datos
+      } else {
+        throw new Error(data.error || 'Credenciales inválidas');
+      }
+    } catch (err) {
+      console.error('❌ Error en login:', err);
+      const message = err instanceof Error ? err.message : 'Error de conexión';
+      setError(message);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    console.error('❌ Error en login:', err);
-    const message = err instanceof Error ? err.message : 'Error de conexion';
-    setError(message);
-    throw err;
-  } finally {
-    setIsLoading(false);
   }
-}
+
+  // ✅ Ahora retorna User
+  async function register(credentials: LoginCredentials & { nombre: string }): Promise<User> {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      // ✅ Usar el endpoint de registro de admin
+      const data = await api.post('/api/auth/register-admin', {
+        email: credentials.email,
+        password: credentials.password,
+        nombre: credentials.nombre,
+      });
+
+      if (data.token) {
+        setToken(data.token);
+
+        const userData: User = {
+          id: data.id || data.user_id || '1',
+          nombre: credentials.nombre,
+          email: credentials.email,
+          tipo: 'admin',
+        };
+
+        localStorage.setItem('user_name', userData.nombre);
+        localStorage.setItem('user_email', userData.email);
+        localStorage.setItem('user_tipo', userData.tipo);
+
+        setUser(userData);
+        return userData;  // ✅ Retornar datos
+      } else {
+        throw new Error(data.error || 'Error al registrarse');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error de conexión';
+      setError(message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   function logout() {
     setToken('');
     localStorage.removeItem('user_name');
     localStorage.removeItem('user_email');
     localStorage.removeItem('user_tipo');
+    localStorage.removeItem('cached_email');
     setUser(null);
     setError(null);
   }
@@ -120,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error, login, logout, clearError }}>
+    <AuthContext.Provider value={{ user, isLoading, error, login, register, logout, clearError }}>
       {children}
     </AuthContext.Provider>
   );
