@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, setToken, getToken } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 import type { Plan, MetodoPago, PlanInfo, CalcularPrecioResponse, CheckoutResponse } from '../types/billing';
 
 type Step = 'bienvenida' | 'planes' | 'configuracion' | 'exito';
@@ -13,6 +14,8 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+
 
   // Datos empresa
   const [nombreEmpresa, setNombreEmpresa] = useState('');
@@ -35,10 +38,18 @@ export default function OnboardingPage() {
 
   // Verificar si el usuario ya completo onboarding
   useEffect(() => {
+    console.log("llama aqui");
+    
     async function checkOnboarding() {
 
       try {
         await api.get('/api/billing/empresa');
+        const stepParam = searchParams.get('step');
+        if (stepParam) {
+          setStep(stepParam as Step);
+          setCheckingOnboarding(false);
+          return; 
+        }
         navigate('/dashboard/mapa', { replace: true });
       } catch {
         cargarPlanes();
@@ -48,6 +59,13 @@ export default function OnboardingPage() {
     }
     checkOnboarding();
   }, [navigate]);
+
+  useEffect(() => {
+    const planParam = searchParams.get('plan');
+    if (planParam === 'basico' || planParam === 'profesional') {
+      setPlanSeleccionado(planParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (planSeleccionado) {
@@ -192,10 +210,13 @@ if (checkingOnboarding) {
   );
 }
 
+  const slideAnimation = (isActive: boolean) => 
+    isActive ? 'animate-slide-in-right' : 'animate-slide-out-left';
+
   // --- Paso 0: Bienvenida -------------------------------------------------
   if (step === 'bienvenida') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4"
+      <div className={`min-h-screen flex items-center justify-center p-4 ${slideAnimation(true)}`}
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -239,6 +260,14 @@ if (checkingOnboarding) {
             <p className="text-gray-600 text-xs mt-4">
               Puedes cambiar de plan o cancelar en cualquier momento
             </p>
+
+            {/* Indicador de pasos */}
+            <div className="flex justify-center gap-2 mt-6">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+              <div className="w-3 h-3 rounded-full bg-gray-600"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -399,10 +428,10 @@ if (checkingOnboarding) {
   // --- Paso 2: Configuracion -----------------------------------------------
   if (step === 'configuracion') {
     return (
-      <div className="min-h-screen p-4 py-8"
+        <div className="min-h-screen overflow-y-auto"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
-        <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto p-4 py-8">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
               <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

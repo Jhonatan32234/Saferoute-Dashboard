@@ -85,8 +85,9 @@ export default function PricingPage() {
                 ))}
               </ul>
 
+              {/* ✅ Cambiado: Va directo a configuración con el plan seleccionado */}
               <button
-                onClick={() => navigate('/onboarding')}
+                onClick={() => navigate(`/onboarding?step=configuracion&plan=${plan.nombre}`)}
                 className={`w-full py-3 font-bold rounded-xl transition-colors ${
                   plan.destacado
                     ? 'bg-purple-600 hover:bg-purple-700 text-white'
