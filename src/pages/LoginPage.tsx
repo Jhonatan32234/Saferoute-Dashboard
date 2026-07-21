@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { api } from '../api/client'; 
+
 
 export default function LoginPage() {
   const { login, register, user, isLoading } = useAuth();
@@ -14,6 +16,7 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   // Si ya está autenticado, redirigir
   useEffect(() => {
@@ -33,14 +36,13 @@ export default function LoginPage() {
     }
   }, []);
 
-  async function handleSubmit(e: FormEvent) {
+async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
 
     try {
       if (modo === 'register') {
-        // ─── REGISTRO (solo admin desde dashboard) ───
         if (!nombre.trim()) {
           throw new Error('El nombre es requerido');
         }
@@ -51,22 +53,12 @@ export default function LoginPage() {
           throw new Error('La contraseña debe tener al menos 6 caracteres');
         }
 
-        // Registrar como admin usando el endpoint público
-        const response = await fetch('/api/auth/register-admin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: email.trim().toLowerCase(),
-            password,
-            nombre: nombre.trim(),
-          }),
+        // ✅ Usar el cliente api en lugar de fetch directo
+        const data = await api.post('/api/auth/register-admin', {
+          email: email.trim().toLowerCase(),
+          password,
+          nombre: nombre.trim(),
         });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Error al registrarse');
-        }
 
         // Guardar token
         localStorage.setItem('saferoute_token', data.token);
@@ -74,28 +66,25 @@ export default function LoginPage() {
           id: data.user_id || data.id,
           nombre: data.nombre,
           email: data.email,
-          tipo: data.tipo,
+          tipo: data.tipo || 'admin',
         }));
 
         // Redirigir a onboarding para elegir plan
         navigate('/onboarding', { replace: true });
       } else {
-        // ─── LOGIN (solo admin) ───
+        // ─── LOGIN ───
         const userData = await login({ email: email.trim().toLowerCase(), password });
 
-        // Validar que sea admin
         if (userData.tipo !== 'admin') {
-          throw new Error('Solo administradores pueden acceder al panel web. Los conductores deben usar la aplicación móvil.');
+          throw new Error('Solo administradores pueden acceder al panel web.');
         }
 
-        // Recordar email
         if (remember) {
           localStorage.setItem('cached_email', email);
         } else {
           localStorage.removeItem('cached_email');
         }
 
-        // Redirigir al dashboard (SubscriptionGuard verificará suscripción)
         navigate('/dashboard/mapa', { replace: true });
       }
     } catch (err) {
