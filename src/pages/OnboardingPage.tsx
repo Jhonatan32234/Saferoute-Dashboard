@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../api/client';
+import { api, setToken, getToken } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 import type { Plan, MetodoPago, PlanInfo, CalcularPrecioResponse, CheckoutResponse } from '../types/billing';
 
@@ -29,13 +29,18 @@ export default function OnboardingPage() {
   // Verificar si el usuario ya completo onboarding
   useEffect(() => {
     async function checkOnboarding() {
+      const token = localStorage.getItem('saferoute_token');
+      if (token) {
+        setToken(token);
+      } else {
+        navigate('/login', { replace: true });
+        return;
+      }
+
       try {
         await api.get('/api/billing/empresa');
-        // Si existe empresa, redirigir al dashboard
         navigate('/dashboard/mapa', { replace: true });
-        return;
       } catch {
-        // No hay empresa registrada, mostrar onboarding
         cargarPlanes();
       } finally {
         setCheckingOnboarding(false);
@@ -124,6 +129,14 @@ export default function OnboardingPage() {
       setError('El nombre de la empresa es requerido');
       return;
     }
+
+     const token = localStorage.getItem('saferoute_token');
+    if (!token) {
+      setError('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      setTimeout(() => navigate('/login', { replace: true }), 1500);
+      return;
+    }
+    setToken(token);  // ← Actualizar el token en el cliente api
 
     setLoading(true);
     setError(null);
