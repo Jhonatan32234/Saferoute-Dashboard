@@ -26,16 +26,16 @@ export default function OnboardingPage() {
   const [metodoPago, setMetodoPago] = useState<MetodoPago>('tarjeta');
   const [precios, setPrecios] = useState<CalcularPrecioResponse | null>(null);
 
+   useEffect(() => {
+    const token = localStorage.getItem('saferoute_token');
+    if (token) {
+      setToken(token);
+    }
+  }, []); 
+
   // Verificar si el usuario ya completo onboarding
   useEffect(() => {
     async function checkOnboarding() {
-      const token = localStorage.getItem('saferoute_token');
-      if (token) {
-        setToken(token);
-      } else {
-        navigate('/login', { replace: true });
-        return;
-      }
 
       try {
         await api.get('/api/billing/empresa');
@@ -51,6 +51,9 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (planSeleccionado) {
+      const token = localStorage.getItem('saferoute_token');
+      if (token) setToken(token);
+      
       calcularPrecios(planSeleccionado, conductoresExtra);
     }
   }, [planSeleccionado, conductoresExtra]);
