@@ -5,9 +5,8 @@
     "types": ["node"],
     "skipLibCheck": true,
     "module": "nodenext",
-    "allowImportingTsExtensions": true,
     "moduleDetection": "force",
-    "noEmit": false,
+    "noEmit": true,
     "composite": true,
 
     /* Linting */
