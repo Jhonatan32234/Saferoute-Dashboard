@@ -141,7 +141,7 @@ export default function PricingPlans() {
         setTimeout(() => { window.location.href = response.checkout_url; }, 2000);
       }
     } catch (err: any) {
-      setError(err.message || 'Error al crear la suscripción');
+      setError(err.message || 'Error al crear la suscripcion');
     } finally {
       setLoading(false);
     }
@@ -156,7 +156,7 @@ export default function PricingPlans() {
         conductores_extra: conductoresExtra,
       });
       setPlanSeleccionado(planNuevo);
-      setSuccessMsg(`✅ Plan cambiado a ${planNuevo === 'profesional' ? 'Profesional' : 'Básico'}`);
+      setSuccessMsg(`Plan cambiado a ${planNuevo === 'profesional' ? 'Profesional' : 'Basico'}`);
       setTimeout(() => setSuccessMsg(''), 3000);
       await verificarEmpresa();
     } catch (err: any) {
@@ -171,7 +171,7 @@ export default function PricingPlans() {
     setError(null);
     try {
       await api.post('/api/billing/empresa/conductores', { cantidad: cantidadExtraModal });
-      setSuccessMsg(`✅ ${cantidadExtraModal} conductor(es) agregado(s)`);
+      setSuccessMsg(`${cantidadExtraModal} conductor(es) agregado(s)`);
       setShowAgregarConductores(false);
       setTimeout(() => setSuccessMsg(''), 3000);
       await verificarEmpresa();
@@ -187,18 +187,18 @@ export default function PricingPlans() {
     setError(null);
     try {
       await api.post('/api/billing/empresa/cancelar', {});
-      setSuccessMsg('✅ Suscripción cancelada');
+      setSuccessMsg('Suscripcion cancelada');
       setShowCancelar(false);
       setTimeout(() => setSuccessMsg(''), 3000);
       await verificarEmpresa();
     } catch (err: any) {
-      setError(err.message || 'Error al cancelar suscripción');
+      setError(err.message || 'Error al cancelar suscripcion');
     } finally {
       setLoading(false);
     }
   }
 
-  // ─── Loading ────────────────────────────────────
+  // --- Loading ----------------------------------------
   if (isLoadingEmpresa) {
     return (
       <div className="p-6 max-w-5xl mx-auto h-full overflow-y-auto flex items-center justify-center">
@@ -207,22 +207,22 @@ export default function PricingPlans() {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          <p className="text-gray-400 text-sm">Verificando suscripción...</p>
+          <p className="text-gray-400 text-sm">Verificando suscripcion...</p>
         </div>
       </div>
     );
   }
 
-  // ─── Panel de gestión (empresa existente) ──────
+  // --- Panel de gestion (empresa existente) ----------
   if (empresa) {
     return (
       <div className="p-6 max-w-5xl mx-auto h-full overflow-y-auto">
-        <h2 className="text-2xl font-bold text-white mb-6">💰 Facturación y Plan</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Facturacion y Plan</h2>
 
         {error && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm flex justify-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="hover:text-red-300">✕</button>
+            <button onClick={() => setError(null)} className="hover:text-red-300">X</button>
           </div>
         )}
         {successMsg && (
@@ -238,14 +238,14 @@ export default function PricingPlans() {
               className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                 tabActiva === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'
               }`}>
-              {tab === 'suscripcion' && '📋 Mi Suscripción'}
-              {tab === 'facturas' && '🧾 Facturas'}
-              {tab === 'historial' && '📜 Historial'}
+              {tab === 'suscripcion' && 'Mi Suscripcion'}
+              {tab === 'facturas' && 'Facturas'}
+              {tab === 'historial' && 'Historial'}
             </button>
           ))}
         </div>
 
-        {/* Tab: Suscripción */}
+        {/* Tab: Suscripcion */}
         {tabActiva === 'suscripcion' && (
           <div className="space-y-6">
             <div className="bg-gray-800/60 rounded-xl p-6 border border-gray-700/50">
@@ -273,34 +273,34 @@ export default function PricingPlans() {
                 </div>
                 <div className="bg-gray-700/30 rounded-lg p-3">
                   <p className="text-gray-400 text-xs">Inicio</p>
-                  <p className="text-white text-sm">{empresa.periodo_inicio ? new Date(empresa.periodo_inicio).toLocaleDateString() : '—'}</p>
+                  <p className="text-white text-sm">{empresa.periodo_inicio ? new Date(empresa.periodo_inicio).toLocaleDateString() : '---'}</p>
                 </div>
                 <div className="bg-gray-700/30 rounded-lg p-3">
                   <p className="text-gray-400 text-xs">Vencimiento</p>
-                  <p className="text-white text-sm">{empresa.periodo_fin ? new Date(empresa.periodo_fin).toLocaleDateString() : '—'}</p>
+                  <p className="text-white text-sm">{empresa.periodo_fin ? new Date(empresa.periodo_fin).toLocaleDateString() : '---'}</p>
                 </div>
               </div>
             </div>
 
-            {/* Botones de acción */}
+            {/* Botones de accion */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button onClick={() => handleCambiarPlan(planSeleccionado === 'basico' ? 'profesional' : 'basico')}
                 disabled={loading}
                 className="p-4 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-xl text-left transition-all disabled:opacity-50">
-                <p className="text-blue-400 font-bold text-sm">🔄 Cambiar Plan</p>
-                <p className="text-gray-400 text-xs mt-1">{planSeleccionado === 'basico' ? 'Actualizar a Profesional' : 'Cambiar a Básico'}</p>
+                <p className="text-blue-400 font-bold text-sm">Cambiar Plan</p>
+                <p className="text-gray-400 text-xs mt-1">{planSeleccionado === 'basico' ? 'Actualizar a Profesional' : 'Cambiar a Basico'}</p>
               </button>
               <button onClick={() => setShowAgregarConductores(true)}
                 disabled={loading}
                 className="p-4 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-xl text-left transition-all disabled:opacity-50">
-                <p className="text-green-400 font-bold text-sm">👥 + Conductores</p>
-                <p className="text-gray-400 text-xs mt-1">Agregar conductores extra ($199/año c/u)</p>
+                <p className="text-green-400 font-bold text-sm">+ Conductores</p>
+                <p className="text-gray-400 text-xs mt-1">Agregar conductores extra ($199/ano c/u)</p>
               </button>
               <button onClick={() => setShowCancelar(true)}
                 disabled={loading}
                 className="p-4 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 rounded-xl text-left transition-all disabled:opacity-50">
-                <p className="text-red-400 font-bold text-sm">⛔ Cancelar</p>
-                <p className="text-gray-400 text-xs mt-1">Cancelar suscripción</p>
+                <p className="text-red-400 font-bold text-sm">Cancelar</p>
+                <p className="text-gray-400 text-xs mt-1">Cancelar suscripcion</p>
               </button>
             </div>
           </div>
@@ -310,18 +310,18 @@ export default function PricingPlans() {
         {tabActiva === 'facturas' && (
           <div className="bg-gray-800/60 rounded-xl border border-gray-700/50 overflow-hidden">
             {facturas.length === 0 ? (
-              <div className="p-8 text-center text-gray-500"><p className="text-4xl mb-2">🧾</p><p>No hay facturas aún</p></div>
+              <div className="p-8 text-center text-gray-500"><p className="text-sm">No hay facturas aun</p></div>
             ) : (
               <table className="w-full">
                 <thead><tr className="border-b border-gray-700/50 text-gray-400 text-xs uppercase">
-                  <th className="text-left p-4">Fecha</th><th className="text-left p-4">Plan</th><th className="text-left p-4">Método</th><th className="text-right p-4">Total</th><th className="text-right p-4">Estado</th>
+                  <th className="text-left p-4">Fecha</th><th className="text-left p-4">Plan</th><th className="text-left p-4">Metodo</th><th className="text-right p-4">Total</th><th className="text-right p-4">Estado</th>
                 </tr></thead>
                 <tbody>
                   {facturas.map(f => (
                     <tr key={f.id} className="border-b border-gray-700/30 hover:bg-gray-700/20">
                       <td className="p-4 text-white text-sm">{new Date(f.fecha_emision).toLocaleDateString()}</td>
                       <td className="p-4 text-white text-sm capitalize">{f.plan}</td>
-                      <td className="p-4 text-gray-400 text-sm capitalize">{f.metodo_pago || '—'}</td>
+                      <td className="p-4 text-gray-400 text-sm capitalize">{f.metodo_pago || '---'}</td>
                       <td className="p-4 text-white text-sm text-right">${f.total.toLocaleString()}</td>
                       <td className="p-4 text-right"><span className={`px-2 py-0.5 rounded text-xs font-medium ${
                         f.estado === 'pagado' ? 'bg-green-500/20 text-green-400' : f.estado === 'pendiente' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
@@ -338,15 +338,12 @@ export default function PricingPlans() {
         {tabActiva === 'historial' && (
           <div className="bg-gray-800/60 rounded-xl border border-gray-700/50">
             {historial.length === 0 ? (
-              <div className="p-8 text-center text-gray-500"><p className="text-4xl mb-2">📜</p><p>No hay historial aún</p></div>
+              <div className="p-8 text-center text-gray-500"><p className="text-sm">No hay historial aun</p></div>
             ) : (
               <div className="divide-y divide-gray-700/30">
                 {historial.map(h => (
                   <div key={h.id} className="p-4 flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-700/50 flex items-center justify-center text-sm flex-shrink-0">
-                      {h.cambio === 'creacion' && '🏢'}{h.cambio === 'activacion' && '✅'}{h.cambio === 'cambio_plan' && '🔄'}
-                      {h.cambio === 'agregar_conductor' && '👥'}{h.cambio === 'pago_recibido' && '💰'}{h.cambio === 'cancelacion' && '⛔'}
-                    </div>
+                    <div className="w-2 h-2 rounded-full bg-blue-400 mt-2 flex-shrink-0"></div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm">{h.descripcion}</p>
                       <p className="text-gray-500 text-xs mt-0.5">{new Date(h.created_at).toLocaleString()}</p>
@@ -357,21 +354,21 @@ export default function PricingPlans() {
             )}
           </div>
         )}
-              {/* ─── Modal: Agregar Conductores ─── */}
+              {/* --- Modal: Agregar Conductores --- */}
       {showAgregarConductores && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowAgregarConductores(false)}>
           <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-white mb-4">Agregar Conductores Extra</h3>
             <p className="text-gray-400 text-sm mb-4">
-              +$199 MXN/año por conductor
+              +$199 MXN/ano por conductor
             </p>
             <div className="flex items-center justify-center gap-4 mb-6">
-              <button onClick={() => setCantidadExtraModal(Math.max(1, cantidadExtraModal - 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">−</button>
+              <button onClick={() => setCantidadExtraModal(Math.max(1, cantidadExtraModal - 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">-</button>
               <span className="text-3xl font-bold text-white">{cantidadExtraModal}</span>
               <button onClick={() => setCantidadExtraModal(Math.min(20, cantidadExtraModal + 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">+</button>
             </div>
             <p className="text-center text-gray-400 text-sm mb-4">
-              Total extra: <span className="text-yellow-400">${(cantidadExtraModal * 199).toLocaleString()} MXN/año</span>
+              Total extra: <span className="text-yellow-400">${(cantidadExtraModal * 199).toLocaleString()} MXN/ano</span>
             </p>
             <div className="flex gap-2">
               <button onClick={() => setShowAgregarConductores(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Cancelar</button>
@@ -383,21 +380,21 @@ export default function PricingPlans() {
         </div>
       )}
 
-      {/* ─── Modal: Cancelar Suscripción ─── */}
+      {/* --- Modal: Cancelar Suscripcion --- */}
       {showCancelar && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowCancelar(false)}>
           <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-red-400 mb-4">⚠️ Cancelar Suscripción</h3>
+            <h3 className="text-lg font-bold text-red-400 mb-4">Cancelar Suscripcion</h3>
             <ul className="text-gray-400 text-xs space-y-1 mb-4">
-              <li>• Tus conductores dejarán de ser monitoreados</li>
-              <li>• No podrás registrar nuevos conductores</li>
-              <li>• El acceso al dashboard se restringirá</li>
-              <li>• No se harán más cobros</li>
+              <li>• Tus conductores dejaran de ser monitoreados</li>
+              <li>• No podras registrar nuevos conductores</li>
+              <li>• El acceso al dashboard se restringira</li>
+              <li>• No se haran mas cobros</li>
             </ul>
             <div className="flex gap-2">
               <button onClick={() => setShowCancelar(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Volver</button>
               <button onClick={handleCancelarSuscripcion} disabled={loading} className="flex-1 py-2 bg-red-600 text-white rounded-lg text-sm disabled:opacity-50">
-                {loading ? 'Cancelando...' : 'Sí, cancelar'}
+                {loading ? 'Cancelando...' : 'Si, cancelar'}
               </button>
             </div>
           </div>
@@ -409,7 +406,7 @@ export default function PricingPlans() {
 
   
 
-  // ─── Paso 1: Selección de Planes ──────────────
+  // --- Paso 1: Seleccion de Planes -----------------
   if (step === 'planes') {
     return (
       <div className="p-6 max-w-5xl mx-auto h-full overflow-y-auto">
@@ -417,7 +414,7 @@ export default function PricingPlans() {
           <h2 className="text-3xl font-bold text-white mb-2">Elige tu Plan Empresarial</h2>
           <p className="text-gray-400">Protege a tu flota con monitoreo en tiempo real y alertas inteligentes</p>
         </div>
-        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}<button onClick={() => setError(null)} className="float-right hover:text-red-300">✕</button></div>}
+        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}<button onClick={() => setError(null)} className="float-right hover:text-red-300">X</button></div>}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {planes.map(plan => {
             const isSelected = planSeleccionado === plan.nombre;
@@ -430,17 +427,16 @@ export default function PricingPlans() {
                 }`}>
                 {isPro && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full text-xs font-bold text-white">RECOMENDADO</div>}
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className={`text-xl font-bold ${isPro ? 'text-purple-400' : 'text-blue-400'}`}>{plan.nombre === 'basico' ? '🚛 Básico' : '⭐ Profesional'}</h3>
+                  <h3 className={`text-xl font-bold ${isPro ? 'text-purple-400' : 'text-blue-400'}`}>{plan.nombre === 'basico' ? 'Basico' : 'Profesional'}</h3>
                   {isSelected && <div className={`w-6 h-6 rounded-full ${isPro ? 'bg-purple-500' : 'bg-blue-500'} flex items-center justify-center`}><svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
                 </div>
-                <p className="text-3xl font-bold text-white mb-1">${plan.precio_anual.toLocaleString()}<span className="text-sm text-gray-400 font-normal"> MXN/año</span></p>
+                <p className="text-3xl font-bold text-white mb-1">${plan.precio_anual.toLocaleString()}<span className="text-sm text-gray-400 font-normal"> MXN/ano</span></p>
                 <p className="text-gray-400 text-sm mb-4">{plan.descripcion}</p>
                 <div className="space-y-2.5">
                   {plan.caracteristicas.map((feat, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm">
-                      {feat.startsWith('❌') ? <span className="text-red-400">{feat}</span> :
-                        <><svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg><span className="text-gray-300">{feat.replace('✅ ', '')}</span></>
-                      }
+                      <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      <span className="text-gray-300">{feat}</span>
                     </div>
                   ))}
                 </div>
@@ -450,29 +446,29 @@ export default function PricingPlans() {
         </div>
         <button onClick={() => setStep('configuracion')}
           className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-xl text-lg transition-all">
-          Continuar con {planSeleccionado === 'profesional' ? 'Profesional' : 'Básico'}
+          Continuar con {planSeleccionado === 'profesional' ? 'Profesional' : 'Basico'}
         </button>
       </div>
     );
   }
 
-  // ─── Paso 2: Configuración ────────────────────
+  // --- Paso 2: Configuracion -----------------------
   if (step === 'configuracion') {
     return (
       <div className="p-6 max-w-3xl mx-auto h-full overflow-y-auto">
         <button onClick={() => setStep('planes')} className="text-gray-400 hover:text-white mb-4 flex items-center gap-1 text-sm">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg> Volver a planes
         </button>
-        <h2 className="text-2xl font-bold text-white mb-6">Configura tu Suscripción</h2>
-        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}<button onClick={() => setError(null)} className="float-right hover:text-red-300">✕</button></div>}
+        <h2 className="text-2xl font-bold text-white mb-6">Configura tu Suscripcion</h2>
+        {error && <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">{error}<button onClick={() => setError(null)} className="float-right hover:text-red-300">X</button></div>}
 
         <div className="bg-gray-800/60 rounded-xl p-6 border border-gray-700/50 mb-6">
-          <h3 className="text-white font-bold mb-4">🏢 Datos de la Empresa</h3>
+          <h3 className="text-white font-bold mb-4">Datos de la Empresa</h3>
           <div className="space-y-4">
             <div><label className="text-gray-400 text-sm block mb-1">Nombre *</label><input type="text" value={nombreEmpresa} onChange={e => setNombreEmpresa(e.target.value)} className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white" /></div>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="text-gray-400 text-sm block mb-1">RFC</label><input type="text" value={rfc} onChange={e => setRfc(e.target.value.toUpperCase())} maxLength={13} className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white uppercase" /></div>
-              <div><label className="text-gray-400 text-sm block mb-1">Email facturación</label><input type="email" value={emailFacturacion} onChange={e => setEmailFacturacion(e.target.value)} className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white" /></div>
+              <div><label className="text-gray-400 text-sm block mb-1">Email facturacion</label><input type="email" value={emailFacturacion} onChange={e => setEmailFacturacion(e.target.value)} className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white" /></div>
             </div>
           </div>
         </div>
@@ -485,14 +481,18 @@ export default function PricingPlans() {
     );
   }
 
-  // ─── Paso 3: Éxito ────────────────────────────
+  // --- Paso 3: Exito -------------------------------
   return (
     <div className="p-6 max-w-3xl mx-auto h-full overflow-y-auto">
       <div className="bg-gray-800/60 rounded-xl p-8 border border-gray-700/50 text-center">
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-white mb-2">¡Suscripción Creada!</h2>
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/20 flex items-center justify-center">
+          <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-2">Suscripcion Creada!</h2>
         <p className="text-gray-400 mb-6">Tu empresa <strong className="text-white">{nombreEmpresa}</strong> ha sido registrada con el plan <strong className="text-blue-400 capitalize">{planSeleccionado}</strong>.</p>
-        <p className="text-gray-500 text-sm mb-6">Serás redirigido para completar el pago...</p>
+        <p className="text-gray-500 text-sm mb-6">Seras redirigido para completar el pago...</p>
         <div className="animate-pulse flex justify-center">
           <svg className="w-8 h-8 text-blue-400" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

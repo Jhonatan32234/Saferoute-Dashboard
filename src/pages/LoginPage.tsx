@@ -1,4 +1,5 @@
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -153,7 +154,7 @@ export default function LoginPage() {
 
           {/* Alerta: Solo admin */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 mb-6 text-xs text-blue-400 text-center">
-            🔐 Este panel es exclusivo para <strong>administradores</strong>.
+            Este panel es exclusivo para <strong>administradores</strong>.
             <br />Los conductores deben usar la aplicación móvil.
           </div>
 

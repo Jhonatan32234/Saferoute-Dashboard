@@ -55,7 +55,7 @@ export default function EmpresaPanel() {
       await api.put('/api/billing/empresa/cambiar-plan', {
         plan_nuevo: planNuevo,
       });
-      setSuccessMsg(`✅ Plan cambiado a ${planNuevo === 'profesional' ? 'Profesional' : 'Básico'}`);
+      setSuccessMsg(`Plan cambiado a ${planNuevo === 'profesional' ? 'Profesional' : 'Basico'}`);
       setShowCambiarPlan(false);
       setTimeout(() => setSuccessMsg(''), 3000);
       cargarEmpresa();
@@ -66,19 +66,17 @@ export default function EmpresaPanel() {
     }
   }
 
-  // ✅ Función para ABRIR el modal
 const handleAbrirModalConductores = () => {
     console.log("llamando aqui");
   setShowAgregarConductores(true);
 };
 
-// ✅ Función para CONFIRMAR (hacer el POST)
 async function handleConfirmarAgregarConductores() {
   setSubmitting(true);
   setError('');
   try {
     await api.post('/api/billing/empresa/conductores', { cantidad: cantidadExtra });
-    setSuccessMsg(`✅ ${cantidadExtra} conductor(es) agregado(s)`);
+    setSuccessMsg(`${cantidadExtra} conductor(es) agregado(s)`);
     setShowAgregarConductores(false);
     setTimeout(() => setSuccessMsg(''), 3000);
     cargarEmpresa();
@@ -94,7 +92,7 @@ async function handleConfirmarAgregarConductores() {
     setError('');
     try {
       await api.post('/api/billing/empresa/cancelar', {});
-      setSuccessMsg('✅ Suscripción cancelada');
+      setSuccessMsg('Suscripcion cancelada');
       setShowCancelar(false);
       setTimeout(() => setSuccessMsg(''), 3000);
       cargarEmpresa();
@@ -105,7 +103,7 @@ async function handleConfirmarAgregarConductores() {
     }
   }
 
-  // ─── Loading ────────────────────────────────────
+  // --- Loading --------------------------------------
   if (loading) {
     return (
       <div className="bg-[#0d1b33] border border-[#2a4070]/30 rounded-2xl p-6">
@@ -118,7 +116,7 @@ async function handleConfirmarAgregarConductores() {
     );
   }
 
-  // ─── Sin empresa ────────────────────────────────
+  // --- Sin empresa ----------------------------------
   if (!empresa) {
     return (
       <div className="bg-[#0d1b33] border border-[#2a4070]/30 rounded-2xl p-6 text-center">
@@ -130,19 +128,19 @@ async function handleConfirmarAgregarConductores() {
     );
   }
 
-  // ─── Datos calculados ───────────────────────────
+  // --- Datos calculados -----------------------------
   const usados = empresa.conductores_actuales;
   const maximo = empresa.max_conductores + empresa.conductores_extra;
   const porcentaje = maximo > 0 ? Math.round((usados / maximo) * 100) : 0;
 
-  // ─── Render ─────────────────────────────────────
+  // --- Render ---------------------------------------
   return (
     <div className="space-y-4">
       {/* Mensajes */}
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm flex justify-between">
           <span>{error}</span>
-          <button onClick={() => setError('')} className="hover:text-red-300">✕</button>
+          <button onClick={() => setError('')} className="hover:text-red-300">X</button>
         </div>
       )}
       {successMsg && (
@@ -157,8 +155,8 @@ async function handleConfirmarAgregarConductores() {
           <div>
             <h3 className="text-lg font-bold text-white">{empresa.nombre_empresa}</h3>
             <p className="text-xs text-gray-500">
-              {empresa.estado_suscripcion === 'activo' ? '🟢 Activo' : 
-               empresa.estado_suscripcion === 'pendiente' ? '🟡 Pendiente' : '🔴 Cancelado'}
+              {empresa.estado_suscripcion === 'activo' ? 'Activo' : 
+               empresa.estado_suscripcion === 'pendiente' ? 'Pendiente' : 'Cancelado'}
               {' · '}
               Plan <span className="capitalize text-blue-400">{empresa.plan_actual}</span>
             </p>
@@ -192,67 +190,67 @@ async function handleConfirmarAgregarConductores() {
         {/* Periodo */}
         {empresa.periodo_fin && (
           <p className="text-xs text-gray-500 mb-4">
-            📅 Vigencia: {new Date(empresa.periodo_inicio).toLocaleDateString()} → {new Date(empresa.periodo_fin).toLocaleDateString()}
+            Vigencia: {new Date(empresa.periodo_inicio).toLocaleDateString()} → {new Date(empresa.periodo_fin).toLocaleDateString()}
           </p>
         )}
 
-        {/* Botones de acción */}
+        {/* Botones de accion */}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowCambiarPlan(true)}
             className="px-4 py-2 bg-blue-600/10 border border-blue-500/30 text-blue-400 rounded-lg text-sm hover:bg-blue-600/20 transition-colors"
           >
-            🔄 Cambiar plan
+            Cambiar plan
           </button>
           <button
             onClick={handleAbrirModalConductores}
             className="px-4 py-2 bg-purple-600/10 border border-purple-500/30 text-purple-400 rounded-lg text-sm hover:bg-purple-600/20 transition-colors"
           >
-            👥 + Conductores
+            + Conductores
           </button>
           {empresa.estado_suscripcion === 'activo' && (
             <button
               onClick={() => setShowCancelar(true)}
               className="px-4 py-2 bg-red-600/10 border border-red-500/30 text-red-400 rounded-lg text-sm hover:bg-red-600/20 transition-colors"
             >
-              ❌ Cancelar plan
+              Cancelar plan
             </button>
           )}
         </div>
       </div>
 
-      {/* ─── Modal: Cambiar Plan ─── */}
+      {/* --- Modal: Cambiar Plan --- */}
 {showCambiarPlan && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowCambiarPlan(false)}>
     <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
       <h3 className="text-lg font-bold text-white mb-2">Cambiar Plan</h3>
       
-      {/* ⚠️ Advertencia si hace downgrade con más conductores */}
+      {/* Advertencia si hace downgrade con mas conductores */}
       {planNuevo === 'basico' && empresa.plan_actual === 'profesional' && empresa.conductores_actuales > 15 && (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4">
-          <p className="text-yellow-400 text-sm font-medium mb-2">⚠️ Atención: Downgrade con conductores extra</p>
+          <p className="text-yellow-400 text-sm font-medium mb-2">Atencion: Downgrade con conductores extra</p>
           <p className="text-gray-300 text-xs">
             Tienes <strong className="text-white">{empresa.conductores_actuales}</strong> conductores. 
-            El plan Básico solo incluye 15. Los{' '}
+            El plan Basico solo incluye 15. Los{' '}
             <strong className="text-white">{empresa.conductores_actuales - 15}</strong> conductores 
-            sobrantes se convertirán en <strong className="text-yellow-400">conductores extra</strong>.
+            sobrantes se convertiran en <strong className="text-yellow-400">conductores extra</strong>.
           </p>
           <p className="text-gray-400 text-xs mt-2">
-            Cargo adicional: <strong className="text-yellow-400">${((empresa.conductores_actuales - 15) * 199).toLocaleString()} MXN/año</strong>
+            Cargo adicional: <strong className="text-yellow-400">${((empresa.conductores_actuales - 15) * 199).toLocaleString()} MXN/ano</strong>
           </p>
         </div>
       )}
 
-      {/* ⚠️ Info si hace upgrade */}
+      {/* Info si hace upgrade */}
       {planNuevo === 'profesional' && empresa.plan_actual === 'basico' && (
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-4">
-          <p className="text-green-400 text-sm font-medium mb-2">⬆️ Upgrade a Profesional</p>
+          <p className="text-green-400 text-sm font-medium mb-2">Upgrade a Profesional</p>
           <p className="text-gray-300 text-xs">
-            Obtendrás 30 conductores incluidos, predicciones IA, alertas personalizadas y más.
+            Obtendras 30 conductores incluidos, predicciones IA, alertas personalizadas y mas.
           </p>
           {empresa.conductores_extra > 0 && (
             <p className="text-green-300 text-xs mt-2">
-              Tus {empresa.conductores_extra} conductores extra actuales se incluirán en el nuevo plan sin cargo adicional.
+              Tus {empresa.conductores_extra} conductores extra actuales se incluiran en el nuevo plan sin cargo adicional.
             </p>
           )}
         </div>
@@ -277,8 +275,8 @@ async function handleConfirmarAgregarConductores() {
         >
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-white font-medium text-sm">🚛 Básico</p>
-              <p className="text-gray-400 text-xs">15 conductores · $2,999 MXN/año</p>
+              <p className="text-white font-medium text-sm">Basico</p>
+              <p className="text-gray-400 text-xs">15 conductores · $2,999 MXN/ano</p>
             </div>
             {empresa.plan_actual === 'basico' && (
               <span className="text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded">Actual</span>
@@ -299,8 +297,8 @@ async function handleConfirmarAgregarConductores() {
         >
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-white font-medium text-sm">⭐ Profesional</p>
-              <p className="text-gray-400 text-xs">30 conductores · $5,999 MXN/año</p>
+              <p className="text-white font-medium text-sm">Profesional</p>
+              <p className="text-gray-400 text-xs">30 conductores · $5,999 MXN/ano</p>
             </div>
             {empresa.plan_actual === 'profesional' && (
               <span className="text-xs text-gray-500 bg-gray-700 px-2 py-1 rounded">Actual</span>
@@ -325,21 +323,21 @@ async function handleConfirmarAgregarConductores() {
   </div>
 )}
 
-      {/* ─── Modal: Agregar Conductores ─── */}
+      {/* --- Modal: Agregar Conductores --- */}
       {showAgregarConductores && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowAgregarConductores(false)}>
           <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-white mb-4">Agregar Conductores Extra</h3>
             <p className="text-gray-400 text-sm mb-4">
-              Actual: {usados} / {maximo} · +$199 MXN/año por conductor
+              Actual: {usados} / {maximo} · +$199 MXN/ano por conductor
             </p>
             <div className="flex items-center justify-center gap-4 mb-6">
-              <button onClick={() => setCantidadExtra(Math.max(1, cantidadExtra - 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">−</button>
+              <button onClick={() => setCantidadExtra(Math.max(1, cantidadExtra - 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">-</button>
               <span className="text-3xl font-bold text-white">{cantidadExtra}</span>
               <button onClick={() => setCantidadExtra(Math.min(20, cantidadExtra + 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">+</button>
             </div>
             <p className="text-center text-gray-400 text-sm mb-4">
-              Total extra: <span className="text-yellow-400">${(cantidadExtra * 199).toLocaleString()} MXN/año</span>
+              Total extra: <span className="text-yellow-400">${(cantidadExtra * 199).toLocaleString()} MXN/ano</span>
             </p>
             <div className="flex gap-2">
               <button onClick={() => setShowAgregarConductores(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Cancelar</button>
@@ -351,21 +349,21 @@ async function handleConfirmarAgregarConductores() {
         </div>
       )}
 
-      {/* ─── Modal: Cancelar Plan ─── */}
+      {/* --- Modal: Cancelar Plan --- */}
       {showCancelar && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowCancelar(false)}>
           <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-red-400 mb-4">⚠️ Cancelar Suscripción</h3>
+            <h3 className="text-lg font-bold text-red-400 mb-4">Cancelar Suscripcion</h3>
             <ul className="text-gray-400 text-xs space-y-1 mb-4">
-              <li>• Tus conductores dejarán de ser monitoreados</li>
-              <li>• No podrás registrar nuevos conductores</li>
-              <li>• El acceso al dashboard se restringirá</li>
-              <li>• No se harán más cobros</li>
+              <li>• Tus conductores dejaran de ser monitoreados</li>
+              <li>• No podras registrar nuevos conductores</li>
+              <li>• El acceso al dashboard se restringira</li>
+              <li>• No se haran mas cobros</li>
             </ul>
             <div className="flex gap-2">
               <button onClick={() => setShowCancelar(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Volver</button>
               <button onClick={handleCancelar} disabled={submitting} className="flex-1 py-2 bg-red-600 text-white rounded-lg text-sm disabled:opacity-50">
-                {submitting ? 'Cancelando...' : 'Sí, cancelar'}
+                {submitting ? 'Cancelando...' : 'Si, cancelar'}
               </button>
             </div>
           </div>

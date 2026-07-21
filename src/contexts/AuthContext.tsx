@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { api, setToken, getToken } from '../api/client';
 import type { User, LoginCredentials } from '../types';
 
@@ -66,14 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
 
     try {
-      console.log('🔑 Intentando login con:', credentials.email);
+      console.log('Intentando login con:', credentials.email);
 
       const data = await api.post('/api/auth/login', credentials);
 
-      console.log('✅ Respuesta del servidor:', data);
+      console.log('Respuesta del servidor:', data);
 
       if (data.token) {
-        console.log('🔐 Token recibido:', data.token.substring(0, 20) + '...');
+        console.log('Token recibido:', data.token.substring(0, 20) + '...');
         setToken(data.token);
 
         const userData: User = {
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           tipo: data.tipo || 'admin',
         };
 
-        console.log('👤 Usuario guardado:', userData);
+        console.log('Usuario guardado:', userData);
 
         localStorage.setItem('user_name', userData.nombre);
         localStorage.setItem('user_email', userData.email);
@@ -95,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.error || 'Credenciales inválidas');
       }
     } catch (err) {
-      console.error('❌ Error en login:', err);
+      console.error('Error en login:', err);
       const message = err instanceof Error ? err.message : 'Error de conexión';
       setError(message);
       throw err;

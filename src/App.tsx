@@ -46,7 +46,7 @@ export default function App() {
             } />
 
             {/* Default */}
-            <Route path="/" element={<Navigate to="/dashboard/mapa" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </MapProvider>
