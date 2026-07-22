@@ -217,7 +217,7 @@ if (checkingOnboarding) {
   // --- Paso 0: Bienvenida -------------------------------------------------
   if (step === 'bienvenida') {
     return (
-      <div className={`min-h-screen flex items-center justify-center p-4 overflow-y-auto ${slideAnimation(true)}`}
+      <div className={`min-h-screen flex items-center justify-center p-4${slideAnimation(true)}`}
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -292,7 +292,7 @@ if (checkingOnboarding) {
     }
 
     return (
-      <div className="min-h-screen p-4 py-8 flex items-center justify-center overflow-y-auto"
+      <div className="min-h-screen p-4 py-8 flex items-center justify-center"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
         <div className="w-full max-w-lg mx-auto">
@@ -609,7 +609,7 @@ if (checkingOnboarding) {
 
   // --- Paso 3: Exito -------------------------------------------------------
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
+    <div className="min-h-screen flex items-center justify-center p-4"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -97,7 +97,7 @@ async function handleSubmit(e: FormEvent) {
   // ─── Loading mientras verifica sesión ───
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center overflow-y-auto"
+      <div className="min-h-screen flex items-center justify-center"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         <div className="text-center">
           <svg className="animate-spin h-10 w-10 text-blue-400 mx-auto mb-4" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@ async function handleSubmit(e: FormEvent) {
 
   // ─── Render ──────────────────────────────────
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-y-auto"
+    <div className="min-h-screen flex items-start justify-center p-4 py-8 relative"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
 
       {/* Elementos decorativos */}

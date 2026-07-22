@@ -10,13 +10,14 @@
   }
 
   body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #0a1628;
-    color: #e8eef5;
-    line-height: 1.6;
-    overflow: hidden;
-    height: 100vh;
-  }
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0a1628;
+  color: #e8eef5;
+  line-height: 1.6;
+  overflow-x: hidden;   /* ← Solo ocultar scroll horizontal */
+  overflow-y: auto;      /* ← Permitir scroll vertical */
+  min-height: 100vh;     /* ← min-height en lugar de height */
+}
 
   a {
     color: #0ea5e9;
