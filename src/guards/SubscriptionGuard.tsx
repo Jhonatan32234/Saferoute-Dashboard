@@ -39,7 +39,7 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
         return;
       }
 
-      // 4. Admin: verificar suscripción
+      // 4. Admin: verificar empresa
       try {
         const empresa = await api.get('/api/billing/empresa');
 
@@ -50,22 +50,8 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
           return;
         }
 
-        // Empresa no activa → redirigir a facturacion (no a precios)
-        if (empresa.estado_suscripcion !== 'activo') {
-          // Si ya está en facturación, permitir acceso
-          if (location.pathname.includes('/dashboard/facturacion') ||
-              location.pathname.includes('/billing')) {
-            setAuthorized(true);
-            setChecking(false);
-            return;
-          }
-          // Redirigir a facturacion para que pueda ver su suscripción pendiente y pagar
-          navigate('/dashboard/facturacion', { replace: true });
-          setChecking(false);
-          return;
-        }
-
-        // Todo OK
+        // Ya tiene empresa → permitir acceso al dashboard
+        // (PricingPlans maneja los distintos estados de suscripción internamente)
         setAuthorized(true);
       } catch (err: any) {
         // Si el endpoint de billing falla (ej: 404 sin empresa)
