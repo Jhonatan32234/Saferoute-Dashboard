@@ -11,7 +11,7 @@ import SubscriptionGuard from './guards/SubscriptionGuard';
 
 function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-[#0a1628] flex items-center justify-center">
+    <div className="min-h-screen bg-[#0a1628] flex items-center justify-center overflow-y-auto">
       <div className="text-center">
         <h1 className="text-6xl font-bold text-[#627d98] mb-4">404</h1>
         <p className="text-[#94a3b8] mb-6">Página no encontrada</p>

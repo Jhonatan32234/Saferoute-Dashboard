@@ -7,40 +7,44 @@ export default function SuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
-  const [verificando, setVerificando] = useState(true);
+  const [checking, setChecking] = useState(true);
+  const [reintentos, setReintentos] = useState(0);
 
   useEffect(() => {
-    // Restaurar token
     const token = localStorage.getItem('saferoute_token');
     if (token) setToken(token);
 
-    // Verificar suscripción cada 2 segundos (máximo 30 segundos)
-    let intentos = 0;
-    const maxIntentos = 15;
+    verificarSuscripcion();
+  }, []);
 
-    const interval = setInterval(async () => {
-      intentos++;
-      try {
-        const empresa = await api.get('/api/billing/empresa');
-        if (empresa.estado_suscripcion === 'activo') {
-          clearInterval(interval);
-          setVerificando(false);
-          navigate('/dashboard/mapa', { replace: true });
-        }
-      } catch {
-        // Si falla, seguir intentando
+  async function verificarSuscripcion() {
+    try {
+      const empresa = await api.get('/api/billing/empresa');
+      
+      if (empresa.estado_suscripcion === 'activo') {
+        // ✅ Suscripción activa → ir al dashboard
+        navigate('/dashboard/mapa', { replace: true });
+        return;
       }
       
-      if (intentos >= maxIntentos) {
-        clearInterval(interval);
-        setVerificando(false);
-        // Si después de 30s no se activó, ir al dashboard de todos modos
-        navigate('/dashboard/mapa', { replace: true });
+      // Si no está activa, reintentar en 3 segundos
+      if (reintentos < 10) {
+        setReintentos(prev => prev + 1);
+        setTimeout(() => verificarSuscripcion(), 3000);
+      } else {
+        // Después de 10 intentos, mostrar opción manual
+        setChecking(false);
       }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [navigate]);
+    } catch {
+      // Error → reintentar
+      if (reintentos < 10) {
+        setReintentos(prev => prev + 1);
+        setTimeout(() => verificarSuscripcion(), 3000);
+      } else {
+        setChecking(false);
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
@@ -55,15 +59,10 @@ export default function SuccessPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-2">¡Pago Exitoso!</h1>
-          <p className="text-gray-400 mb-4">Tu suscripción ha sido activada correctamente.</p>
           
-          {sessionId && (
-            <p className="text-gray-500 text-xs mb-6 font-mono">Sesión: {sessionId.substring(0, 20)}...</p>
-          )}
-
-          {verificando ? (
+          {checking ? (
             <>
-              <p className="text-gray-400 text-sm mb-4">Verificando activación de suscripción...</p>
+              <p className="text-gray-400 mb-4">Verificando activación de suscripción... ({reintentos}/10)</p>
               <div className="flex justify-center mb-6">
                 <svg className="animate-spin h-8 w-8 text-blue-400" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -72,12 +71,15 @@ export default function SuccessPage() {
               </div>
             </>
           ) : (
-            <button
-              onClick={() => navigate('/dashboard/mapa', { replace: true })}
-              className="text-blue-400 hover:text-blue-300 text-sm underline"
-            >
-              Ir al dashboard ahora
-            </button>
+            <>
+              <p className="text-gray-400 mb-4">El pago se procesó pero la activación está tardando.</p>
+              <button
+                onClick={() => navigate('/dashboard/mapa', { replace: true })}
+                className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors"
+              >
+                Ir al Dashboard
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -50,16 +50,17 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
           return;
         }
 
-        // Empresa no activa → precios
+        // Empresa no activa → redirigir a facturacion (no a precios)
         if (empresa.estado_suscripcion !== 'activo') {
-          // Si está en facturación, sí permitir (para que pueda pagar)
+          // Si ya está en facturación, permitir acceso
           if (location.pathname.includes('/dashboard/facturacion') ||
               location.pathname.includes('/billing')) {
             setAuthorized(true);
             setChecking(false);
             return;
           }
-          navigate('/precios', { replace: true });
+          // Redirigir a facturacion para que pueda ver su suscripción pendiente y pagar
+          navigate('/dashboard/facturacion', { replace: true });
           setChecking(false);
           return;
         }
@@ -83,7 +84,7 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
   // Loading mientras verifica
   if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center"
+      <div className="min-h-screen flex items-center justify-center overflow-y-auto"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         <div className="text-center">
           <svg className="animate-spin h-10 w-10 text-blue-400 mx-auto mb-4" viewBox="0 0 24 24">

@@ -65,8 +65,10 @@ export default function PricingPlans() {
   }
 
   async function verificarEmpresa() {
+    console.log("llamada");
     try {
       const data = await api.get<EmpresaResponse>('/api/billing/empresa');
+      console.log(data);
       setEmpresa(data);
       setNombreEmpresa(data.nombre_empresa);
       setRfc(data.rfc || '');

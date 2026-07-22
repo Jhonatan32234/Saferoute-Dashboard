@@ -49,6 +49,8 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
       headers,
       credentials: 'omit'
     });
+    console.log("resp:",response);
+    
 
     console.log(`📥 Respuesta: ${response.status} ${response.statusText}`);
 

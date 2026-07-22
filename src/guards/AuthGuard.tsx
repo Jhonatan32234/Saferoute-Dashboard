@@ -15,10 +15,14 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
+    console.log("llamada");
+    
     verificarAcceso();
   }, []);
 
   async function verificarAcceso() {
+    console.log("llamada");
+    
     const token = localStorage.getItem('saferoute_token');
     
     // 1. Sin token → redirigir a login
@@ -41,6 +45,8 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
       if (perfil.tipo === 'admin') {
         try {
           const empresa = await api.get('/api/billing/empresa');
+          console.log(empresa);
+          
           
           // Si no tiene empresa → onboarding
           if (!empresa || !empresa.id) {
@@ -48,9 +54,9 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
             return;
           }
           
-          // Si tiene empresa pero no está activa → precios
+          // Si tiene empresa pero no está activa → facturacion (para pagar)
           if (empresa.estado_suscripcion !== 'activo') {
-            navigate('/precios', { replace: true });
+            navigate('/dashboard/facturacion', { replace: true });
             return;
           }
         } catch {
@@ -74,7 +80,7 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
   // Mostrar loading mientras verifica
   if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center"
+      <div className="min-h-screen flex items-center justify-center overflow-y-auto"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         <LoadingSpinner message="Verificando acceso..." />
       </div>

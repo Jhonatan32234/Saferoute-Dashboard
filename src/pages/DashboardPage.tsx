@@ -14,6 +14,7 @@ function LazyFallback() {
   return <LoadingSpinner message="Cargando modulo..." />;
 }
 
+// DashboardPage.tsx - Simplificado
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -21,26 +22,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isLoading && !user) {
       navigate('/login', { replace: true });
-      return;
-    }
-
-    if (!isLoading && user) {
-      // Verificar si el usuario ya tiene empresa (onboarding completado)
-      verificarOnboarding();
     }
   }, [user, isLoading, navigate]);
-
-  async function verificarOnboarding() {
-    try {
-      // Intentar obtener la empresa - si falla, no tiene empresa
-      await api.get('/api/billing/empresa');
-      // Tiene empresa, puede pasar al dashboard
-      //return true
-    } catch {
-      // No tiene empresa → redirigir al onboarding
-      navigate('/onboarding', { replace: true });
-    }
-  }
 
   if (isLoading) {
     return (
