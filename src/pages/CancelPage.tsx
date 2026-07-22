@@ -5,7 +5,7 @@ export default function CancelPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4"
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
       
       <div className="w-full max-w-md text-center">

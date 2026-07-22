@@ -40,6 +40,10 @@ export default function PricingPlans() {
   // Modal: Cancelar suscripción
   const [showCancelar, setShowCancelar] = useState(false);
 
+  // Modal: Quitar conductores extra
+  const [showQuitarConductores, setShowQuitarConductores] = useState(false);
+  const [cantidadQuitar, setCantidadQuitar] = useState(1);
+
   useEffect(() => {
     cargarPlanes();
     verificarEmpresa();
@@ -120,6 +124,22 @@ export default function PricingPlans() {
       setHistorial([]);
     }
   }
+
+  async function handleQuitarConductores() {
+  setLoading(true);
+  setError(null);
+  try {
+    await api.post('/api/billing/empresa/conductores/quitar', { cantidad: cantidadQuitar });
+    setSuccessMsg(`✅ ${cantidadQuitar} conductor(es) extra quitado(s)`);
+    setShowQuitarConductores(false);
+    setTimeout(() => setSuccessMsg(''), 3000);
+    await verificarEmpresa();
+  } catch (err: any) {
+    setError(err.message || 'Error al quitar conductores');
+  } finally {
+    setLoading(false);
+  }
+}
 
   async function handleContratar() {
     if (!nombreEmpresa.trim()) {
@@ -294,8 +314,16 @@ export default function PricingPlans() {
                 disabled={loading}
                 className="p-4 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-xl text-left transition-all disabled:opacity-50">
                 <p className="text-green-400 font-bold text-sm">+ Conductores</p>
-                <p className="text-gray-400 text-xs mt-1">Agregar conductores extra ($199/ano c/u)</p>
+                <p className="text-gray-400 text-xs mt-1">Agregar conductores extra ($199/año c/u)</p>
               </button>
+              {empresa.conductores_extra > 0 && (
+                <button onClick={() => setShowQuitarConductores(true)}
+                  disabled={loading}
+                  className="p-4 bg-orange-600/20 hover:bg-orange-600/30 border border-orange-500/30 rounded-xl text-left transition-all disabled:opacity-50">
+                  <p className="text-orange-400 font-bold text-sm">Quitar extra</p>
+                  <p className="text-gray-400 text-xs mt-1">Reducir conductores extra</p>
+                </button>
+              )}
               <button onClick={() => setShowCancelar(true)}
                 disabled={loading}
                 className="p-4 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 rounded-xl text-left transition-all disabled:opacity-50">
@@ -395,6 +423,32 @@ export default function PricingPlans() {
               <button onClick={() => setShowCancelar(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Volver</button>
               <button onClick={handleCancelarSuscripcion} disabled={loading} className="flex-1 py-2 bg-red-600 text-white rounded-lg text-sm disabled:opacity-50">
                 {loading ? 'Cancelando...' : 'Si, cancelar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+            {/* ─── Modal: Quitar Conductores Extra ─── */}
+      {showQuitarConductores && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowQuitarConductores(false)}>
+          <div className="bg-[#0d1b33] border border-[#2a4070] rounded-2xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-white mb-4">Quitar Conductores Extra</h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Actual: {empresa.conductores_extra} extra · Límite del plan: {empresa.max_conductores} · Activos: {empresa.conductores_actuales}
+            </p>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <button onClick={() => setCantidadQuitar(Math.max(1, cantidadQuitar - 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">−</button>
+              <span className="text-3xl font-bold text-white">{cantidadQuitar}</span>
+              <button onClick={() => setCantidadQuitar(Math.min(empresa.conductores_extra, cantidadQuitar + 1))} className="w-10 h-10 rounded-lg bg-gray-700 text-white text-xl">+</button>
+            </div>
+            <p className="text-center text-green-400 text-sm mb-4">
+              Ahorro: ${(cantidadQuitar * 199).toLocaleString()} MXN/año
+            </p>
+            <div className="flex gap-2">
+              <button onClick={() => setShowQuitarConductores(false)} className="flex-1 py-2 bg-gray-700 text-gray-300 rounded-lg text-sm">Cancelar</button>
+              <button onClick={handleQuitarConductores} disabled={loading} className="flex-1 py-2 bg-orange-600 text-white rounded-lg text-sm disabled:opacity-50">
+                {loading ? 'Quitando...' : 'Confirmar'}
               </button>
             </div>
           </div>

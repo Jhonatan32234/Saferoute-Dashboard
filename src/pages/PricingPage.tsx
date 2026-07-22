@@ -42,7 +42,7 @@ export default function PricingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen p-4 py-8"
+    <div className="min-h-screen p-4 py-8 overflow-y-auto"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
       
       <div className="max-w-4xl mx-auto text-center">

@@ -169,6 +169,7 @@ export default function OnboardingPage() {
         email_facturacion: emailFacturacion || undefined,
         plan: planSeleccionado,
         metodo_pago: metodoPago,
+        conductores_extra: conductoresExtra,
       });
 
       setStep('exito');
@@ -197,7 +198,7 @@ export default function OnboardingPage() {
   // ✅ AGREGAR ESTO justo después de los useEffect y antes de los if (step === ...)
 if (checkingOnboarding) {
   return (
-    <div className="min-h-screen flex items-center justify-center"
+    <div className="min-h-screen flex items-center justify-center overflow-y-auto"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
       <div className="text-center">
         <svg className="animate-spin h-10 w-10 text-blue-400 mx-auto mb-4" viewBox="0 0 24 24">
@@ -216,7 +217,7 @@ if (checkingOnboarding) {
   // --- Paso 0: Bienvenida -------------------------------------------------
   if (step === 'bienvenida') {
     return (
-      <div className={`min-h-screen flex items-center justify-center p-4 ${slideAnimation(true)}`}
+      <div className={`min-h-screen flex items-center justify-center p-4 overflow-y-auto ${slideAnimation(true)}`}
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -291,7 +292,7 @@ if (checkingOnboarding) {
     }
 
     return (
-      <div className="min-h-screen p-4 py-8 flex items-center justify-center"
+      <div className="min-h-screen p-4 py-8 flex items-center justify-center overflow-y-auto"
         style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
         
         <div className="w-full max-w-lg mx-auto">
@@ -608,7 +609,7 @@ if (checkingOnboarding) {
 
   // --- Paso 3: Exito -------------------------------------------------------
   return (
-    <div className="min-h-screen flex items-center justify-center p-4"
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-y-auto"
       style={{ background: 'linear-gradient(135deg, #0a1628 0%, #0f1f3a 50%, #0d1b33 100%)' }}>
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
