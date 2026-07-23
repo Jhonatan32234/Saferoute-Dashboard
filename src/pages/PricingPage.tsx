@@ -13,10 +13,6 @@ const planes = [
       '15 conductores incluidos',
       'Monitoreo en tiempo real',
       'Reportes basicos de incidentes',
-      'Soporte por email',
-      '1 administrador',
-      'Sin predicciones IA',
-      'Sin alertas personalizadas',
     ],
   },
   {
@@ -31,10 +27,6 @@ const planes = [
       'Monitoreo en tiempo real',
       'Reportes avanzados con IA',
       'Predicciones de zonas de riesgo',
-      'Alertas personalizables',
-      'Hasta 3 administradores',
-      'Acceso API',
-      'Soporte prioritario',
     ],
   },
 ];
