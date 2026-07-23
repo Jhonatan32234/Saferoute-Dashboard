@@ -93,10 +93,6 @@ export default function OnboardingPage() {
             '15 conductores incluidos',
             'Monitoreo en tiempo real',
             'Reportes basicos',
-            'Soporte por email',
-            '1 administrador',
-            'Sin predicciones IA',
-            'Sin alertas personalizadas',
           ],
         },
         {
@@ -111,9 +107,6 @@ export default function OnboardingPage() {
             'Reportes avanzados',
             'Predicciones con IA',
             'Alertas personalizadas',
-            '3 administradores',
-            'API de acceso',
-            'Soporte prioritario',
           ],
         },
       ]);
